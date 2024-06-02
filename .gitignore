@@ -1,5 +1,0 @@
-#.vscode/
-#.release/
-#.build-release.bat
-#.build/*
-#!.build/include/
