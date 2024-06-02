@@ -1,4 +1,4 @@
-/.release
-/build-release.bat
+.release/
+.build-release.bat
 .build/*
 !.build/include/
