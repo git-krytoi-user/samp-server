@@ -1,0 +1,7 @@
+{
+    "files.encoding": "windows1251",
+    "C_Cpp.errorSquiggles": "Disabled",
+	//"files.exclude": {
+	//	".build/": true 
+	//}
+}
