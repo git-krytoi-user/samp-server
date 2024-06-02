@@ -22,7 +22,7 @@ public: OnLoadAdmins(playerid, account_id) {
             warns,
             code[MAX_ADMIN_PASSWORD],
             nickname[MAX_PLAYER_NAME],
-            string[] = ""cWHITE"Добро пожаловать, Администратор "cBLUE"%s.",
+            string[] = ""cWHITE" ,  "cBLUE"%s.",
             string_size[sizeof string + (-2+MAX_PLAYER_NAME) + (-2+1)]
         ;
 
@@ -62,7 +62,7 @@ stock Admins:SetPlayerAdmin(playerid, lvl, password[MAX_ADMIN_PASSWORD]) {
     format(string_query, sizeof string_query, "INSERT INTO admins (account_id, level, warns, code) VALUES (%d, %d, 0, '%s')", GetUserData(playerid, u_id), lvl, password);
     mysql_pquery(dbHandle, string_query);
 
-    return SendClientMessage(playerid, -1, ""cGREY"Вы были назначены на пост администратора.");
+    return SendClientMessage(playerid, -1, ""cGREY"     .");
 }
 
 stock Admins:RemovePlayerAdmin(playerid) {
@@ -73,7 +73,7 @@ stock Admins:RemovePlayerAdmin(playerid) {
     Iter_Remove(iAdmins, playerid);
     admin_data[playerid] = admin_data_clear;
 
-    return SendClientMessage(playerid, -1, ""cGREY"Вы были сняты с поста администратора.");
+    return SendClientMessage(playerid, -1, ""cGREY"     .");
 }
 
 stock Admins:SetAdminWarn(playerid, count) {
@@ -87,7 +87,7 @@ stock Admins:SetAdminWarn(playerid, count) {
         Admins:RemovePlayerAdmin(playerid);    
     }
 
-    return SendClientMessage(playerid, -1, ""cPUSH"Вам было установлено предупреждение.");
+    return SendClientMessage(playerid, -1, ""cPUSH"   .");
 }
 
 stock Admins:GiveAdminWarn(playerid, count) {
@@ -101,13 +101,13 @@ stock Admins:GiveAdminWarn(playerid, count) {
         Admins:RemovePlayerAdmin(playerid);    
     }
 
-    return SendClientMessage(playerid, -1, ""cPUSH"Вам было выдано предупреждение.");
+    return SendClientMessage(playerid, -1, ""cPUSH"   .");
 }
 
 stock Admins:EditAdminCode(playerid, password[MAX_ADMIN_PASSWORD]) {
     SetAdminData(playerid, a_code, password);
     new text[93 + MAX_ADMIN_PASSWORD] = EOS;
-    format(text, sizeof text, ""cPUSH"Ваш пароль входа в систему администратора был изменён "cBLUE"(%s)", password);
+    format(text, sizeof text, ""cPUSH"        "cBLUE"(%s)", password);
 
     new string_query[51 + MAX_ADMIN_PASSWORD + 11] = EOS;
     format(string_query, sizeof string_query, "UPDATE admins SET code = '%s' WHERE account_id = %d", password, GetUserData(playerid, u_id));
@@ -128,13 +128,13 @@ stock Admins:AddReport(playerid, const text[MAX_TEXT_REPORT]) {
     new free_id = Iter_Free(iReport);
 
     if (free_id == ITER_NONE) {
-        return SendClientMessage(playerid, -1, ""cERROR"Список жалоб переполнен.");
+        return SendClientMessage(playerid, -1, ""cERROR"  .");
     }
 
     SetReportData(free_id, r_sender, playerid);
     SetReportData(free_id, r_text, text);
 
-    SendClientMessage(playerid, -1, ""cPUSH"Ваша жалоба была отправлена на рассмотрение администрации.");
+    SendClientMessage(playerid, -1, ""cPUSH"      .");
     return Iter_Add(iReport, free_id);
 }
 
@@ -150,21 +150,21 @@ DialogCreate:DLG_ALOGIN(playerid) {
     Dialog_Open(playerid, 
         Dialog:DLG_ALOGIN, 
         DIALOG_STYLE_PASSWORD, 
-        ""PROJECT_NAME"Авторизация администратора.", 
-        ""cWHITE"Введите Ваш пароль от панели администратора.",
-        ""cWHITE"Далее", 
-        ""cWHITE"Контекст"
+        ""PROJECT_NAME" .", 
+        ""cWHITE"     .",
+        ""cWHITE"", 
+        ""cWHITE""
     );
 }
 
 DialogCreate:DLG_REPORTS_LIST(playerid) {
     new count = Iter_Count(iReport);
-    if (!count) return SendClientMessage(playerid, -1, ""cGREY"Список жалоб пуст.");
+    if (!count) return SendClientMessage(playerid, -1, ""cGREY"  .");
     
     new 
         dialog_string[107 + 40 + 3 + MAX_PLAYER_NAME + 64 * MAX_REPORTS / MAX_DIALOG_ITEMS_PAGE + 120] = 
-        "{ffffff}Порядковый номер:\t{ffffff}Отправитель:\t{ffffff}Текст:\n",
-        dialog_header[] = ""PROJECT_NAME"Список всех жалоб [%d/%d]",
+        "{ffffff} :\t{ffffff}:\t{ffffff}:\n",
+        dialog_header[] = ""PROJECT_NAME"   [%d/%d]",
         dialog_header_size[sizeof dialog_header + (-2+2) * 2 + 5],
         page = g_player_rep_page[playerid]
     ;
@@ -209,16 +209,16 @@ DialogCreate:DLG_REPORTS_LIST(playerid) {
 
     format(dialog_header_size, sizeof dialog_header_size, dialog_header, page, MAX_REPORTS / MAX_DIALOG_ITEMS_PAGE - 1);
 
-    return Dialog_Open(playerid, Dialog:DLG_REPORTS_LIST, DIALOG_STYLE_TABLIST_HEADERS, dialog_header_size, dialog_string, ""cWHITE"Выбор", ""cWHITE"Закрыть");
+    return Dialog_Open(playerid, Dialog:DLG_REPORTS_LIST, DIALOG_STYLE_TABLIST_HEADERS, dialog_header_size, dialog_string, ""cWHITE"", ""cWHITE"");
 }
 
 DialogCreate:DLG_ADMIN_COMMANDS(playerid) {
     new count = sizeof g_admin_commands;
-    if (!count) return SendClientMessage(playerid, -1, ""cERROR"Список команд пуст");
+    if (!count) return SendClientMessage(playerid, -1, ""cERROR"  ");
 
     new
         dialog_string[3096] = 
-        ""cGREY"Уровень администратора\t"cGREY"Название команды\t"cGREY"Описание команды\t"cGREY"Аргументы команды\n",
+        ""cGREY" \t"cGREY" \t"cGREY" \t"cGREY" \n",
         page = g_player_admin_commands_page[playerid]
     ;
 
@@ -261,17 +261,17 @@ DialogCreate:DLG_ADMIN_COMMANDS(playerid) {
         }
     }
 
-    return Dialog_Open(playerid, Dialog:DLG_ADMIN_COMMANDS, DIALOG_STYLE_TABLIST_HEADERS, ""PROJECT_NAME"Команды администратора", dialog_string, ""cWHITE"Закрыть", "");
+    return Dialog_Open(playerid, Dialog:DLG_ADMIN_COMMANDS, DIALOG_STYLE_TABLIST_HEADERS, ""PROJECT_NAME" ", dialog_string, ""cWHITE"", "");
 }
 
 DialogCreate:DLG_ADMINS_LIST(playerid) {
     new count = Iter_Count(iAdmins);
     if (!count)
-        return SendClientMessage(playerid, -1, ""cGREY"Нет ни одного администратора в сети.");
+        return SendClientMessage(playerid, -1, ""cGREY"     .");
 
     new
         dialog_string[2096] = 
-        ""cGREY"Администратор:\t"cGREY"Уровень:\t"cGREY"Кол-во предупреждений:\t"cGREY"AUTH:\n",
+        ""cGREY":\t"cGREY":\t"cGREY"- :\t"cGREY"AUTH:\n",
         page = g_player_admins_page[playerid]
     ;
 
@@ -298,13 +298,13 @@ DialogCreate:DLG_ADMINS_LIST(playerid) {
         if(idx >= end) 
             break;
 
-        format(dialog_string, sizeof dialog_string, "%s"cBLUE"%s[%d]\t%d\t%d из 3\t%s\n", 
+        format(dialog_string, sizeof dialog_string, "%s"cBLUE"%s[%d]\t%d\t%d  3\t%s\n", 
             dialog_string, 
             GetUserData(i, u_name), 
             i, 
             GetAdminData(i, a_level), 
             GetAdminData(i, a_warns),
-            GetAdminData(i, a_isAuth) ? ""cGREEN"АВТОРИЗОВАН" : ""cRED"НЕ АВТОРИЗОВАН"
+            GetAdminData(i, a_isAuth) ? ""cGREEN"" : ""cRED" "
         );
     }
 
@@ -318,7 +318,7 @@ DialogCreate:DLG_ADMINS_LIST(playerid) {
         }
     }
 
-    return Dialog_Open(playerid, Dialog:DLG_ADMINS_LIST, DIALOG_STYLE_TABLIST_HEADERS, ""PROJECT_NAME"Администрация онлайн", dialog_string, ""cWHITE"Закрыть", "");
+    return Dialog_Open(playerid, Dialog:DLG_ADMINS_LIST, DIALOG_STYLE_TABLIST_HEADERS, ""PROJECT_NAME" ", dialog_string, ""cWHITE"", "");
 }
 
 DialogCreate:DLG_REPORT_ANSWER(playerid) {
@@ -326,18 +326,18 @@ DialogCreate:DLG_REPORT_ANSWER(playerid) {
         report_index = g_player_rep_idx[playerid],
         report_sender = GetReportData(report_index, r_sender),
         player_name[MAX_PLAYER_NAME], 
-        dialog_header[] = ""cWHITE"Ответ игроку - "cBLUE"%s[%d]",
+        dialog_header[] = ""cWHITE"  - "cBLUE"%s[%d]",
         dialog_header_size[sizeof dialog_header + (-2+MAX_PLAYER_NAME) + (-2+4)],
         dialog_main[] = 
         "\
-            "cWHITE"В поле ввода Вы можете отправить ответ игроку. \n\
+            "cWHITE"       . \n\
         "
     ;
 
     GetPlayerName(report_sender, player_name, MAX_PLAYER_NAME);
     format(dialog_header_size, sizeof dialog_header_size, dialog_header, player_name, report_sender);
 
-    return Dialog_Open(playerid, Dialog:DLG_REPORT_ANSWER, DIALOG_STYLE_INPUT, dialog_header_size, dialog_main, ""cWHITE"Ответить", ""cWHITE"Назад");
+    return Dialog_Open(playerid, Dialog:DLG_REPORT_ANSWER, DIALOG_STYLE_INPUT, dialog_header_size, dialog_main, ""cWHITE"", ""cWHITE"");
 }
 
 /*
@@ -374,9 +374,9 @@ DialogResponse:DLG_REPORT_ANSWER(playerid, response, listitem, inputtext[]) {
         report_sender = GetReportData(report_index, r_sender),
         player_name[MAX_PLAYER_NAME],
         answer[144],
-        string[] = ""cGREY"Администратор: %s[%d] ответил Вам на ваш репорт: %s",
+        string[] = ""cGREY": %s[%d]     : %s",
         string_size[sizeof string + (-2+MAX_PLAYER_NAME) + (-2+4) + (-2+144)],
-        string_two[] = ""cRED"A: Администратор: %s[%d] ответил игроку %s[%d]: %s",
+        string_two[] = ""cRED"A: : %s[%d]   %s[%d]: %s",
         string_two_size[sizeof string_two + (-2+MAX_PLAYER_NAME) + (-2+4) + (-2+MAX_PLAYER_NAME) + (-2+4) + (-2+144)]
     ;
     if (sscanf(inputtext, "s[144]", answer))
@@ -385,7 +385,7 @@ DialogResponse:DLG_REPORT_ANSWER(playerid, response, listitem, inputtext[]) {
     if (strlen(answer) > 32) {
         Dialog_Show(playerid, Dialog:DLG_REPORT_ANSWER);
 
-        return SendClientMessage(playerid, -1, ""cGREY"Максимальная длина для Вашего ответа - 32 символа");
+        return SendClientMessage(playerid, -1, ""cGREY"     - 32 ");
     }
 
     GetPlayerName(report_sender, player_name, MAX_PLAYER_NAME);
@@ -456,7 +456,7 @@ DialogResponse:DLG_REPORTS_LIST(playerid, response, listitem, inputtext[]) {
     }
 
     if (idx == -1) {
-        return SendClientMessage(playerid, -1, ""cERROR"Неизвестный индекс, сообщите разработчикам (idx == -1)");
+        return SendClientMessage(playerid, -1, ""cERROR" ,   (idx == -1)");
     }
 
     g_player_rep_idx[playerid] = idx;
@@ -478,15 +478,15 @@ DialogResponse:DLG_ALOGIN(playerid, response, listitem, inputtext[]) {
     
     if (code[0] == GetAdminData(playerid, a_code)) {
         new string[92 + MAX_PLAYER_NAME] = EOS;
-        format(string, sizeof string, ""cWHITE"Администратор "cBLUE"%s "cWHITE"авторизировался ("cGREEN_BRIGHT"%d "cWHITE"уровень).", 
+        format(string, sizeof string, ""cWHITE" "cBLUE"%s "cWHITE" ("cGREEN_BRIGHT"%d "cWHITE").", 
             user_data[playerid][u_name], GetAdminData(playerid, a_level)
         );
         Admins:SendAdminsMessage(string);
         SetAdminData(playerid, a_isAuth, true);
 
-        SendClientMessage(playerid, -1, ""cPUSH"Вы успешно авторизировались в системе администратора.");
+        SendClientMessage(playerid, -1, ""cPUSH"     .");
 
-        PlayerTextDrawSetString(playerid, ptd_greenzone[playerid], "~g~УСПЕШНАЯ АДМИН-АВТОРИЗАЦИЯ");
+        PlayerTextDrawSetString(playerid, ptd_greenzone[playerid], "~g~ -");
         PlayerTextDrawFont(playerid, ptd_greenzone[playerid], 1);
         ShowBrightnessTextDraw(playerid);
     } else {
@@ -535,7 +535,7 @@ cmd:goto(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/goto [ playerid ]");
 
     if (!IsPlayerConnected(id)) {
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён к серверу!");
+        return SendClientMessage(playerid, -1, ""cGREY"     !");
     }
     
     new
@@ -554,7 +554,7 @@ cmd:goto(playerid, params[]) {
     SetPlayerInterior(playerid, interiorId);
     SetPlayerVirtualWorld(playerid, virtualWorld);
 
-    return SendClientMessage(playerid, -1, ""cPUSH"Вы были телепортированы к игроку.");
+    return SendClientMessage(playerid, -1, ""cPUSH"    .");
 }
 
 cmd:gethere(playerid, params[]) {
@@ -565,7 +565,7 @@ cmd:gethere(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/gethere [ playerid ]");
 
     if (!IsPlayerConnected(id)) {
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён к серверу!");
+        return SendClientMessage(playerid, -1, ""cGREY"     !");
     }
     
     new
@@ -585,10 +585,10 @@ cmd:gethere(playerid, params[]) {
     SetPlayerInterior(id, interiorId);
     SetPlayerVirtualWorld(id, virtualWorld);
 
-    format(string, sizeof string, ""aTAG"Администратор "cBLUE"%s "cWHITE"телепортировал к себе игрока "cBLUE"%s", user_data[playerid][u_name], user_data[id][u_name]);
+    format(string, sizeof string, ""aTAG" "cBLUE"%s "cWHITE"    "cBLUE"%s", user_data[playerid][u_name], user_data[id][u_name]);
     Admins:SendAdminsMessage(string);
 
-    return SendClientMessage(playerid, -1, ""cPUSH"Вы телепортировали игрока к себе.");
+    return SendClientMessage(playerid, -1, ""cPUSH"    .");
 }
 
 cmd:set_admin(playerid, params[]) {
@@ -604,12 +604,12 @@ cmd:set_admin(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/set_admin [ playerid ] [ lvl 1-6 ] [password]");
 
     if (!IsPlayerConnected(id)) {
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён к серверу!");
+        return SendClientMessage(playerid, -1, ""cGREY"     !");
     }
 
-    if (Iter_Contains(iAdmins, id)) return SendClientMessage(playerid, -1, ""cGREY"Этот игрок уже администратор.");
+    if (Iter_Contains(iAdmins, id)) return SendClientMessage(playerid, -1, ""cGREY"   .");
 
-    if (id == playerid) return SendClientMessage(playerid, -1, ""cGREY"Вы не можете самому себе выдать права администратора");
+    if (id == playerid) return SendClientMessage(playerid, -1, ""cGREY"       ");
     if (level < 1 || level > 6) return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/setadmin [ playerid ] [ lvl 1-6 ] [ password ]");
 
     return Admins:SetPlayerAdmin(id, level, code);
@@ -626,12 +626,12 @@ cmd:remove_admin(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/remove_admin [ playerid ]");
 
     if (!IsPlayerConnected(id)) {
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён к серверу!");
+        return SendClientMessage(playerid, -1, ""cGREY"     !");
     }
 
-    if (!Iter_Contains(iAdmins, id)) return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не администратор");
+    if (!Iter_Contains(iAdmins, id)) return SendClientMessage(playerid, -1, ""cGREY"   ");
 
-    if (id == playerid) return SendClientMessage(playerid, -1, ""cGREY"Вы не можете самому себе снять права администратора");
+    if (id == playerid) return SendClientMessage(playerid, -1, ""cGREY"       ");
 
     return Admins:RemovePlayerAdmin(id);
 }
@@ -645,10 +645,10 @@ cmd:a_setpassword(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/a_setpassword [ playerid ] [ new_password ]");
 
     if (!IsPlayerConnected(id)) {
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён к серверу!");
+        return SendClientMessage(playerid, -1, ""cGREY"     !");
     }
 
-    if (!Iter_Contains(iAdmins, id)) return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не администратор");
+    if (!Iter_Contains(iAdmins, id)) return SendClientMessage(playerid, -1, ""cGREY"   ");
 
     return Admins:EditAdminCode(id, code);
 }
@@ -662,12 +662,12 @@ cmd:a_setpassword(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/a_unwarn [ playerid ] [ count ]");
 
     if (!IsPlayerConnected(id)) {
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён к серверу!");
+        return SendClientMessage(playerid, -1, ""cGREY"     !");
     }
 
-    if (!Iter_Contains(iAdmins, id)) return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не администратор");
+    if (!Iter_Contains(iAdmins, id)) return SendClientMessage(playerid, -1, ""cGREY"   ");
 
-    SendClientMessage(playerid, -1, ""cPUSH"Администратору было установлено предупреждение.");
+    SendClientMessage(playerid, -1, ""cPUSH"   .");
     return Admins:SetAdminWarn(id, count);
 }
 
@@ -680,12 +680,12 @@ cmd:a_warn(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/a_warn [ playerid ] [ 1-3 ]");
 
     if (!IsPlayerConnected(id)) {
-        return SendClientMessage(playerid, -1, ""cERROR"Этот игрок не подключён к серверу!");
+        return SendClientMessage(playerid, -1, ""cERROR"     !");
     }
 
-    if (!Iter_Contains(iAdmins, id)) return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не администратор");
+    if (!Iter_Contains(iAdmins, id)) return SendClientMessage(playerid, -1, ""cGREY"   ");
 
-    SendClientMessage(playerid, -1, ""cPUSH"Администратору было установлено предупреждение.");
+    SendClientMessage(playerid, -1, ""cPUSH"   .");
     return Admins:GiveAdminWarn(id, count);
 }*/
 
@@ -712,7 +712,7 @@ cmd:set_virtualworld(playerid, params[]) {
     if (sscanf(params, "d", vw_id))
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/set_virtualworld [ ID ]");
 
-    SendClientMessage(playerid, -1, ""cPUSH"Виртуальный мир для Вас был изменён.");
+    SendClientMessage(playerid, -1, ""cPUSH"     .");
     return SetPlayerVirtualWorld(playerid, vw_id);
 }
 
@@ -724,7 +724,7 @@ cmd:set_interior(playerid, params[]) {
     if (sscanf(params, "d", int_id))
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/set_interior [ ID ]");
 
-    SendClientMessage(playerid, -1, ""cPUSH"Интерьер для Вас был изменён.");
+    SendClientMessage(playerid, -1, ""cPUSH"    .");
     return SetPlayerVirtualWorld(playerid, int_id);
 }
 
@@ -773,25 +773,25 @@ cmd:set_satiety(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/set_satiety [ playerid ] [ 1-100 ]");
 
     if (!IsPlayerConnected(player_id))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён.");
+        return SendClientMessage(playerid, -1, ""cGREY"   .");
 
     if (!GetUserData(player_id, u_auth))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не авторизовался.");
+        return SendClientMessage(playerid, -1, ""cGREY"   .");
 
     if (satiety < 1.0)
-        return SendClientMessage(playerid, -1, ""cGREY"Вы не можете установить уровень сытости меньше нуля.");
+        return SendClientMessage(playerid, -1, ""cGREY"       .");
 
     if (satiety > 100.0)
-        return SendClientMessage(playerid, -1, ""cGREY"Вы не можете установить уровень сытости больше ста.");
+        return SendClientMessage(playerid, -1, ""cGREY"       .");
 
     if (GetUserData(player_id, u_satiety) >= 100.0)
-        return SendClientMessage(playerid, -1, ""cGREY"У этого игрока полная сытость.");
+        return SendClientMessage(playerid, -1, ""cGREY"    .");
 
     GetPlayerName(player_id, player_name, MAX_PLAYER_NAME);
     SetUserData(player_id, u_satiety, satiety);
 
     UpdatePlayerBar(player_id, 2);
-    return SendClientMessage(playerid, -1, ""cGREY"Вы изменили сытость этому игроку.");
+    return SendClientMessage(playerid, -1, ""cGREY"    .");
 }
 
 cmd:gotocar(playerid, params[]) {
@@ -809,11 +809,11 @@ cmd:gotocar(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/gotocar [ vehicleid ]");
 
     if (!IsValidVehicle(vehicle_id))
-        return SendClientMessage(playerid, -1, ""cGREY"Данного транспорта на сервере не существует");
+        return SendClientMessage(playerid, -1, ""cGREY"     ");
 
     GetVehiclePos(vehicle_id, vehicle_x, vehicle_y, vehicle_z);
     
-    SendClientMessage(playerid, -1, ""cRED"A: Вы были телепортированы");
+    SendClientMessage(playerid, -1, ""cRED"A:   ");
     return SetPlayerPos(playerid, vehicle_x, vehicle_y, vehicle_z);
 }
 
@@ -832,11 +832,11 @@ cmd:getherecar(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/getherecar [ vehicleid ]");
 
     if (!IsValidVehicle(vehicle_id))
-        return SendClientMessage(playerid, -1, ""cGREY"Данного транспорта на сервере не существует");
+        return SendClientMessage(playerid, -1, ""cGREY"     ");
 
     GetPlayerPos(playerid, player_x, player_y, player_z);
     
-    SendClientMessage(playerid, -1, ""cRED"A: Вы телепортировали транспорт к себе");
+    SendClientMessage(playerid, -1, ""cRED"A:     ");
     return SetVehiclePos(vehicle_id, player_x, player_y, player_z);
 }
 
@@ -850,9 +850,9 @@ cmd:fixvehicle(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/fv [ vehicleid ]");
 
     if (!IsValidVehicle(vehicle_id))
-        return SendClientMessage(playerid, -1, ""cGREY"Данного транспорта на сервере не существует");
+        return SendClientMessage(playerid, -1, ""cGREY"     ");
 
-    SendClientMessage(playerid, -1, ""cRED"A: Вы починили этот транспорт");
+    SendClientMessage(playerid, -1, ""cRED"A:    ");
     return RepairVehicle(vehicle_id);
 }
 
@@ -864,18 +864,18 @@ cmd:mute(playerid, params[]) {
         player_id,
         mute_time = 0,
         reason[32],
-        string[] = "{fa584c}A: Администратор %s заблокировал чат игроку %s на %d минут. Причина: %s",
+        string[] = "{fa584c}A:  %s    %s  %d . : %s",
         string_size[sizeof string + (-2+MAX_PLAYER_NAME) + (-2+MAX_PLAYER_NAME) + (-2+11) + (-2+32)]
     ;
 
     if (sscanf(params, "uds[32]", player_id, mute_time, reason))
-        return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/mute [ playerid / Name_Surname ] [ минуты ] [ причина ]");
+        return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/mute [ playerid / Name_Surname ] [  ] [  ]");
 
     if (!IsPlayerConnected(player_id))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён к серверу.");
+        return SendClientMessage(playerid, -1, ""cGREY"     .");
 
     if (!GetUserData(player_id, u_auth))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не авторизовался на сервере.");
+        return SendClientMessage(playerid, -1, ""cGREY"     .");
 
     new unix_time = gettime() + mute_time * 60;
 
@@ -891,15 +891,15 @@ cmd:unmute(playerid, params[]) {
 
     new
         player_id,
-        string[] = "{fa584c}A: Администратор %s снял блокировку игрового чата игроку %s",
+        string[] = "{fa584c}A:  %s      %s",
         string_size[sizeof string + (-2+MAX_PLAYER_NAME) + (-2+MAX_PLAYER_NAME) + (-2+11) + (-2+32)]
     ;
 
     if (!IsPlayerConnected(player_id))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён к серверу.");
+        return SendClientMessage(playerid, -1, ""cGREY"     .");
 
     if (!GetUserData(player_id, u_auth))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не авторизовался на сервере.");
+        return SendClientMessage(playerid, -1, ""cGREY"     .");
 
     if (sscanf(params, "u", player_id))
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/unmute [ playerid / Name_Surname ]");
@@ -920,22 +920,22 @@ cmd:stats(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/stats [ playerid ]");
 
     if (!IsPlayerConnected(player_id))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён к серверу.");
+        return SendClientMessage(playerid, -1, ""cGREY"     .");
 
     if (!GetUserData(player_id, u_auth))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не авторизовался на сервере.");
+        return SendClientMessage(playerid, -1, ""cGREY"     .");
 
     new fmt[] = 
         "\
             \n\
-            "cWHITE"Никнейм: \t\t"cBLUE"%s \n\
+            "cWHITE": \t\t"cBLUE"%s \n\
             "cWHITE"UID: \t\t\t"cBLUE"%d \n\
-            "cWHITE"Уровень: \t\t"cBLUE"%d \n\
-            "cWHITE"Дата регистрации: \t"cBLUE"%s \n\
-            "cWHITE"Опыт: \t\t\t"cYELLOW"%d/%d EXP \n\
-            "cWHITE"Кошелёк: \t\t"cGREEN"%d $ \n\
-            "cWHITE"Счёт в банке: \t\t"cGREEN"1000 $ \n\
-            "cWHITE"Депозит: \t\t"cGREEN"5000 $ \n\
+            "cWHITE": \t\t"cBLUE"%d \n\
+            "cWHITE" : \t"cBLUE"%s \n\
+            "cWHITE": \t\t\t"cYELLOW"%d/%d EXP \n\
+            "cWHITE": \t\t"cGREEN"%d $ \n\
+            "cWHITE"  : \t\t"cGREEN"1000 $ \n\
+            "cWHITE": \t\t"cGREEN"5000 $ \n\
             \n\
         ",
         player_name[MAX_PLAYER_NAME],
@@ -954,10 +954,10 @@ cmd:stats(playerid, params[]) {
     );
 
     if (Admins_IsPlayerAdmin(player_id)) {
-        strcat(size_fmt, !""cWHITE"\nСтатус: \t\t"cBLUE"Администратор");
+        strcat(size_fmt, !""cWHITE"\n: \t\t"cBLUE"");
     }
 
-    return Dialog_Open(playerid, Dialog:DLG_PLAYER_STATS, DIALOG_STYLE_MSGBOX, ""PROJECT_NAME"Статистика игрока.", size_fmt, ""cWHITE"Закрыть", "");
+    return Dialog_Open(playerid, Dialog:DLG_PLAYER_STATS, DIALOG_STYLE_MSGBOX, ""PROJECT_NAME" .", size_fmt, ""cWHITE"", "");
 }
 
 cmd:offstats(playerid, params[]) {
@@ -990,14 +990,14 @@ cmd:offstats(playerid, params[]) {
         fmt[] = 
         "\
             \n\
-            "cWHITE"Никнейм \t\t"cBLUE"%s \n\
+            "cWHITE" \t\t"cBLUE"%s \n\
             "cWHITE"UID \t\t\t"cBLUE"%d \n\
-            "cWHITE"Уровень \t\t"cBLUE"%d \n\
-            "cWHITE"Дата регистрации \t"cBLUE"%s \n\
-            "cWHITE"Пол \t\t\t"cBLUE"%s \n\
-            "cWHITE"Национальность \t"cBLUE"%s \n\
-            "cWHITE"Опыт \t\t\t"cYELLOW"%d/%d EXP \n\
-            "cWHITE"Кошелёк \t\t"cGREEN"%d $ \n\
+            "cWHITE" \t\t"cBLUE"%d \n\
+            "cWHITE"  \t"cBLUE"%s \n\
+            "cWHITE" \t\t\t"cBLUE"%s \n\
+            "cWHITE" \t"cBLUE"%s \n\
+            "cWHITE" \t\t\t"cYELLOW"%d/%d EXP \n\
+            "cWHITE" \t\t"cGREEN"%d $ \n\
             "cWHITE"REG-IP \t\t"cBLUE"%s \n\
             \n\
         ",
@@ -1007,7 +1007,7 @@ cmd:offstats(playerid, params[]) {
     cache_get_row_count(rows);
 
     if (!rows)
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не найден в базе данных.");
+        return SendClientMessage(playerid, -1, ""cGREY"      .");
 
     cache_get_value_name_int(0, "id", account_id);
     cache_get_value_name(0, "name", name);
@@ -1024,7 +1024,7 @@ cmd:offstats(playerid, params[]) {
         account_id, 
         score,
         reg_date,
-        gender ? ""cBLUE"Мужской" : ""cBLUE"Женский",
+        gender ? ""cBLUE"" : ""cBLUE"",
         g_types_nationality[idx_nationality], 
         exp, 
         (score + 1) * 4, 
@@ -1032,7 +1032,7 @@ cmd:offstats(playerid, params[]) {
         reg_ip
     );
 
-    Dialog_Open(playerid, Dialog:DLG_PLAYER_STATS, DIALOG_STYLE_MSGBOX, ""PROJECT_NAME"Статистика игрока.", size_fmt, ""cWHITE"Закрыть", "");
+    Dialog_Open(playerid, Dialog:DLG_PLAYER_STATS, DIALOG_STYLE_MSGBOX, ""PROJECT_NAME" .", size_fmt, ""cWHITE"", "");
 
     return cache_delete(cache_id);
 }
@@ -1050,13 +1050,13 @@ cmd:hp(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/hp [ playerid ] [ 1-100 ]");
 
     if (!IsPlayerConnected(player_id))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён к серверу.");
+        return SendClientMessage(playerid, -1, ""cGREY"     .");
 
     if (!GetUserData(player_id, u_auth))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не авторизовался на сервере.");
+        return SendClientMessage(playerid, -1, ""cGREY"     .");
 
     if ((health < 1.0) || (health > 100.0))
-        return SendClientMessage(playerid, -1, ""cGREY"Диапазон уровня ХП должен быть от 1 до 100");
+        return SendClientMessage(playerid, -1, ""cGREY"      1  100");
 
     return SetPlayerHealth(player_id, health);
 }
@@ -1074,13 +1074,13 @@ cmd:set_armour(playerid, params[]) {
         return SendClientMessage(playerid, -1, ""COMMAND_USAGE_FORMAT"/set_armour [ playerid ] [ 1-100 ]");
 
     if (!IsPlayerConnected(player_id))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не подключён к серверу.");
+        return SendClientMessage(playerid, -1, ""cGREY"     .");
 
     if (!GetUserData(player_id, u_auth))
-        return SendClientMessage(playerid, -1, ""cGREY"Этот игрок не авторизовался на сервере.");
+        return SendClientMessage(playerid, -1, ""cGREY"     .");
 
     if ((armour < 1.0) || (armour > 100.0))
-        return SendClientMessage(playerid, -1, ""cGREY"Диапазон уровня брони должен быть от 1 до 100");
+        return SendClientMessage(playerid, -1, ""cGREY"      1  100");
 
     return SetPlayerArmour(playerid, armour);
 }
@@ -1089,6 +1089,10 @@ cmd:admins(playerid) {
     if (!Iter_Contains(iAdmins, playerid)) return SendClientMessage(playerid, -1, MESSAGE_NO_PERMS);
 
     return Dialog_Show(playerid, Dialog:DLG_ADMINS_LIST);
+}
+
+cmd:debug(playerid) {
+    return 1;
 }
 
 /*
