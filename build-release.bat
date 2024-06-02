@@ -11,8 +11,8 @@ REM
 MKDIR releases >nul 2>&1
 
 REM
-"%cd%\build\pawncc.exe" -;+ -(+ -w=217 -v=2 -d=3 -i="%cd%\build\include" "%cd%\sources\new.pwn"
+"%cd%\compiler\pawncc.exe" -;+ -(+ -w=217 -v=2 -d=3 -i="%cd%\compiler\include" "%cd%\sources\new.pwn"
 MKDIR "releases\%CURRENT_DATE% build" >nul 2>&1
-MOVE /Y new.amx "releases\%CURRENT_DATE% build\new.amx" >nul 2>&1
+MOVE /Y new.amx "releases\%CURRENT_DATE% compiler\new.amx" >nul 2>&1
 
 timeout /t 2
